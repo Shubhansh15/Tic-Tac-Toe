@@ -1,0 +1,77 @@
+const boxes = document.querySelectorAll('.box');
+const resetBtn = document.getElementById('reset-btn');
+const newBtn = document.getElementById('new-btn');
+const msgContainer = document.querySelector('.msg-container');
+const msg = document.getElementById('msg');
+
+let currentPlayer = 'X';
+let gameOver = false;
+
+boxes.forEach((box, index) => {
+  box.addEventListener('click', () => {
+    if (gameOver) return;
+    if (box.textContent === '') {
+      box.textContent = currentPlayer;
+      checkWinner();
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    }
+  });
+});
+
+resetBtn.addEventListener('click', () => {
+  boxes.forEach((box) => {
+    box.textContent = '';
+  });
+  currentPlayer = 'X';
+  gameOver = false;
+  msgContainer.classList.remove('show');
+});
+
+newBtn.addEventListener('click', () => {
+  boxes.forEach((box) => {
+    box.textContent = '';
+  });
+  currentPlayer = 'X';
+  gameOver = false;
+  msgContainer.classList.remove('show');
+});
+
+function checkWinner() {
+  const winningCombinations = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  for (let i = 0; i < winningCombinations.length; i++) {
+    const [a, b, c] = winningCombinations[i];
+    if (
+      boxes[a].textContent === boxes[b].textContent &&
+      boxes[b].textContent === boxes[c].textContent &&
+      boxes[a].textContent !== ''
+    ) {
+      gameOver = true;
+      msg.textContent = `Player ${boxes[a].textContent} wins!`;
+      msgContainer.classList.add('show');
+      return;
+    }
+  }
+
+  // Check for a draw
+  let draw = true;
+  boxes.forEach((box) => {
+    if (box.textContent === '') {
+      draw = false;
+    }
+  });
+  if (draw) {
+    gameOver = true;
+    msg.textContent = 'It\'s a draw!';
+    msgContainer.classList.add('show');
+  }
+}
